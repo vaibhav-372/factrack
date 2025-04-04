@@ -4,16 +4,18 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import App from './App';
 import AdminLogin from './admin/admin-login/AdminLogin';
 import './index.css';
+import AdminDashboard from './admin/admin-dashboard/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const RootComponent = () => {
   const location = useLocation();
 
-  // If the route is "/admin-login", render only the AdminLogin component
+  // Show AdminLogin only when this path is typed
   if (location.pathname === '/root-admin-login') {
     return <AdminLogin />;
   }
 
-  // Otherwise, load the full app
+  // Everything else routes to <App />
   return <App />;
 };
 
@@ -21,6 +23,18 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
+        <Route path="/root-admin-login" element={<AdminLogin />} />
+        
+        <Route
+          path="/admin/dashboard/*"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Everything else */}
         <Route path="/*" element={<RootComponent />} />
       </Routes>
     </BrowserRouter>
