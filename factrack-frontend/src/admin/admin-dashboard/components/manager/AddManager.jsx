@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 
-const AddManager = ({ onManagerAdded }) => {
+const AddManager = ({ onManagerAdded = () => {} }) => {
   const initialValues = {
     name: '',
     email: '',
@@ -31,17 +31,29 @@ const AddManager = ({ onManagerAdded }) => {
   });
 
   const handleSubmit = async (values, { setSubmitting, resetForm, setErrors }) => {
+    const token = localStorage.getItem('token');
+
     try {
-      const res = await axios.post('http://localhost:5000/api/admin/managers', values, {
-        headers: { 'Content-Type': 'application/json' },
+      const res = await axios.post('http://localhost:5000/api/admin/add-managers', values, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
       onManagerAdded(res.data);
       alert('Manager added successfully');
       resetForm();
     } catch (error) {
       console.error('Add manager error:', error);
-      if (error.response?.data?.message) {
-        setErrors({ email: error.response.data.message });
+      const msg = error.response?.data?.message || 'Something went wrong';
+      
+      // Custom error mapping based on message
+      if (msg.includes('email')) {
+        setErrors({ email: msg });
+      } else if (msg.includes('Username')) {
+        setErrors({ username: msg });
+      } else {
+        alert(msg);
       }
     } finally {
       setSubmitting(false);
@@ -59,7 +71,7 @@ const AddManager = ({ onManagerAdded }) => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="text-xl sm:text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center"
+        className="text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center"
       >
         Add New Manager
       </motion.h2>
@@ -85,7 +97,7 @@ const AddManager = ({ onManagerAdded }) => {
               <div key={name}>
                 <label
                   htmlFor={name}
-                  className="block text-sm sm:text-base md:text-lg text-teal-700 font-semibold mb-1"
+                  className="block text-base text-teal-700 font-semibold mb-1"
                 >
                   {label}
                 </label>
@@ -93,12 +105,12 @@ const AddManager = ({ onManagerAdded }) => {
                   name={name}
                   type={type}
                   id={name}
-                  className="w-full p-2 sm:p-3 border border-teal-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base"
+                  className="w-full p-3 border border-teal-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 text-base"
                 />
                 <ErrorMessage
                   name={name}
                   component="div"
-                  className="text-red-500 text-xs sm:text-sm mt-1"
+                  className="text-red-500 text-sm mt-1"
                 />
               </div>
             ))}
@@ -107,7 +119,7 @@ const AddManager = ({ onManagerAdded }) => {
             <div>
               <label
                 htmlFor="remarks"
-                className="block text-sm sm:text-base md:text-lg text-teal-700 font-semibold mb-1"
+                className="block text-base text-teal-700 font-semibold mb-1"
               >
                 Remarks
               </label>
@@ -115,12 +127,12 @@ const AddManager = ({ onManagerAdded }) => {
                 as="textarea"
                 name="remarks"
                 rows="4"
-                className="w-full p-2 sm:p-3 border border-teal-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 text-sm sm:text-base resize-none"
+                className="w-full p-3 border border-teal-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 text-base resize-none"
               />
               <ErrorMessage
                 name="remarks"
                 component="div"
-                className="text-red-500 text-xs sm:text-sm mt-1"
+                className="text-red-500 text-sm mt-1"
               />
             </div>
 
@@ -129,7 +141,7 @@ const AddManager = ({ onManagerAdded }) => {
               disabled={isSubmitting}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="w-full bg-teal-500 text-white py-3 rounded-xl font-bold hover:bg-teal-600 transition-all duration-300 text-sm sm:text-base md:text-lg"
+              className="w-full bg-teal-500 text-white py-3 rounded-xl font-bold hover:bg-teal-600 transition-all duration-300 text-lg"
             >
               {isSubmitting ? 'Adding...' : 'Add Manager'}
             </motion.button>
@@ -141,3 +153,4 @@ const AddManager = ({ onManagerAdded }) => {
 };
 
 export default AddManager;
+  
