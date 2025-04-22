@@ -71,4 +71,22 @@ router.post('/add-managers', async (req, res) => {
   }
 });
 
+// Fetch All Managers
+router.get('/fetch-managers', async (req, res) => {
+  try {
+    // Fetch all managers from the database
+    const fetchedManagers = await AddManager.find();
+    // console.log(`fetched managers list data from backend is:-`, fetchedManagers)
+
+    res.json({
+      success: true,
+      data: fetchedManagers,
+    });
+  } catch (err) {
+    console.error('Error fetching managers:', err);
+    res.status(500).json({ success: false, message: 'Server error while fetching managers' });
+  }
+});
+
+
 module.exports = router;

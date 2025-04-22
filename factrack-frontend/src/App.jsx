@@ -1,6 +1,5 @@
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import AdminLogin from './admin/admin-login/AdminLogin';
 
 const App = () => {
   const location = useLocation();
