@@ -10,7 +10,7 @@ const AddManager = ({ onManagerAdded = () => {} }) => {
     phone: '',
     dept: '',
     DOJ: '',
-    managerID: '',
+    managerID: '',  
     qualification: '',
     salary: '',
     username: '',

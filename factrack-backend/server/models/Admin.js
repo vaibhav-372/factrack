@@ -11,6 +11,7 @@ const managerSchema = new mongoose.Schema({
   salary: { type: Number, required: true },
   username: { type: String, required: true, unique: true },
   remarks: { type: String },
+  isDeleted: {type: Boolean},
 }, { timestamps: true });
 
 module.exports = mongoose.model('ManagersList', managerSchema);

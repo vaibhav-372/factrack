@@ -59,7 +59,8 @@ router.post('/add-managers', async (req, res) => {
       qualification,
       salary,
       username,
-      remarks
+      remarks,
+      isDeleted: 0,
     });
 
     const saved = await newManager.save();
@@ -88,5 +89,44 @@ router.get('/fetch-managers', async (req, res) => {
   }
 });
 
+// Update a manager
+router.put('/update-manager/:id', async (req, res) => {
+  try {
+    const updatedManager = await AddManager.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedManager) return res.status(404).json({ message: 'Manager not found' });
+    res.json(updatedManager);
+  } catch (err) {
+    let message = 'Update failed';
+    if (err.code === 11000) {
+      if (err.keyPattern?.email) message = 'Email already exists';
+      else if (err.keyPattern?.username) message = 'Username already exists';
+    }
+    res.status(400).json({ message });
+  }
+});
+
+// Soft delete a manager by setting isDeleted to 1
+router.put('/delete-manager/:id', async (req, res) => {
+  try {
+    const manager = await AddManager.findByIdAndUpdate(
+      req.params.id,
+      { isDeleted: 1 },
+      { new: true }
+    );
+
+    if (!manager) {
+      return res.status(404).json({ message: 'Manager not found' });
+    }
+
+    res.json({ success: true, message: 'Manager deleted (soft delete) successfully', data: manager });
+  } catch (err) {
+    console.error('Error deleting manager:', err);
+    res.status(500).json({ success: false, message: 'Server error while deleting manager' });
+  }
+});
 
 module.exports = router;
