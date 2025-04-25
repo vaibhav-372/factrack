@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import ManagersList from '../components/manager/ManagerList.jsx';
-import AddManager from '../components/manager/AddManager.jsx';
+import ProductsList from '../components/products/ProductsList.jsx';
+import AddProduct from '../components/products/AddProduct.jsx';
 
 const Products = () => {
   const [activeTab, setActiveTab] = useState('list');
@@ -34,9 +34,9 @@ const Products = () => {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'add' && <AddManager onManagerAdded={handleAdd} />}
+      {activeTab === 'add' && <AddProduct onManagerAdded={handleAdd} />}
       {activeTab === 'list' && (
-        <ManagersList />
+        <ProductsList />
       )}
     </div>
   );

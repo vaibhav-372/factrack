@@ -1,16 +1,20 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { addManager } from '../../../redux/adminManagerSlice';
 
-const AddManager = ({ onManagerAdded = () => {} }) => {
+const AddManager = ({ onManagerAdded = () => { } }) => {
+
+  const dispatch = useDispatch();
+
   const initialValues = {
     name: '',
     email: '',
     phone: '',
     dept: '',
     DOJ: '',
-    managerID: '',  
+    managerID: '',
     qualification: '',
     salary: '',
     username: '',
@@ -31,34 +35,33 @@ const AddManager = ({ onManagerAdded = () => {} }) => {
   });
 
   const handleSubmit = async (values, { setSubmitting, resetForm, setErrors }) => {
-    const token = localStorage.getItem('token');
-
     try {
-      const res = await axios.post('http://localhost:5000/api/admin/add-managers', values, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      onManagerAdded(res.data);
-      alert('Manager added successfully');
-      resetForm();
-    } catch (error) {
-      console.error('Add manager error:', error);
-      const msg = error.response?.data?.message || 'Something went wrong';
-      
-      // Custom error mapping based on message
-      if (msg.includes('email')) {
-        setErrors({ email: msg });
-      } else if (msg.includes('Username')) {
-        setErrors({ username: msg });
+      const resultAction = await dispatch(addManager(values));  
+  
+      if (addManager.fulfilled.match(resultAction)) {
+        onManagerAdded(resultAction.payload);
+        alert('Manager added successfully');
+        resetForm();
       } else {
-        alert(msg);
+        const error = resultAction.payload || resultAction.error;
+        const msg = error?.message || 'Something went wrong';
+  
+        // Handle specific error messages
+        if (msg.includes('email')) {
+          setErrors({ email: msg });
+        } else if (msg.includes('Username')) {
+          setErrors({ username: msg });
+        } else {
+          alert(msg);
+        }
       }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      alert('An unexpected error occurred');
     } finally {
       setSubmitting(false);
     }
-  };
+  };  
 
   return (
     <motion.div
@@ -84,16 +87,16 @@ const AddManager = ({ onManagerAdded = () => {} }) => {
         {({ isSubmitting }) => (
           <Form className="space-y-5">
             {[
-              { name: 'name', label: 'Name' },
-              { name: 'email', label: 'Email', type: 'email' },
-              { name: 'phone', label: 'Phone' },
-              { name: 'dept', label: 'Department' },
+              { name: 'name', label: 'Name', placeholder: 'Enter manager name' },
+              { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter manager email address' },
+              { name: 'phone', label: 'Phone', placeholder: 'Enter manager phone number' },
+              { name: 'dept', label: 'Department', placeholder: 'Enter manager department name' },
               { name: 'DOJ', label: 'Date of Joining', type: 'date' },
-              { name: 'managerID', label: 'Manager ID' },
-              { name: 'qualification', label: 'Qualification' },
-              { name: 'salary', label: 'Salary', type: 'number' },
-              { name: 'username', label: 'Username' },
-            ].map(({ name, label, type = 'text' }) => (
+              { name: 'managerID', label: 'Manager ID', placeholder: 'Enter unique manager ID' },
+              { name: 'qualification', label: 'Qualification', placeholder: 'Enter manager qualification' },
+              { name: 'salary', label: 'Salary', type: 'number', placeholder: 'Enter manager salary amount' },
+              { name: 'username', label: 'Username', placeholder: 'Enter manager username' },
+            ].map(({ name, label, type = 'text', placeholder }) => (
               <div key={name}>
                 <label
                   htmlFor={name}
@@ -105,6 +108,7 @@ const AddManager = ({ onManagerAdded = () => {} }) => {
                   name={name}
                   type={type}
                   id={name}
+                  placeholder={placeholder}
                   className="w-full p-3 border border-teal-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 text-base"
                 />
                 <ErrorMessage
@@ -127,6 +131,7 @@ const AddManager = ({ onManagerAdded = () => {} }) => {
                 as="textarea"
                 name="remarks"
                 rows="4"
+                placeholder='Additional comments or notes'
                 className="w-full p-3 border border-teal-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-400 text-base resize-none"
               />
               <ErrorMessage
@@ -153,4 +158,3 @@ const AddManager = ({ onManagerAdded = () => {} }) => {
 };
 
 export default AddManager;
-  

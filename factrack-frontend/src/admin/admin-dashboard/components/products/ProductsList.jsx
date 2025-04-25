@@ -1,79 +1,74 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchManagers, deleteManager } from '../../../redux/adminManagerSlice';
-import UpdateManager from './UpdateManager';
+import { fetchProducts, deleteProduct } from '../../../redux/adminProductSlice.js';
+import UpdateProduct from './UpdateProduct.jsx';
 
-const ManagersList = () => {
+const ProductsList = () => {
   const dispatch = useDispatch();
-  const managers = useSelector(state => state.adminManager.list || []);
+  const products = useSelector(state => state.adminProduct.list || []);
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedManager, setSelectedManager] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchManagers());
+    dispatch(fetchProducts());
   }, [dispatch]);
 
-  const handleDelete = (manager) => {
-    if (window.confirm(`Are you sure you want to delete manager: ${manager.name}?`)) {
-      dispatch(deleteManager(manager._id))
+  const handleDelete = (Product) => {
+    if (window.confirm(`Are you sure you want to delete Product: ${Product.productName}?`)) {
+      dispatch(deleteProduct(Product._id))
         .unwrap()
         .then(() => {
-          alert('Manager deleted successfully!');
-          dispatch(fetchManagers());
+          alert('Product deleted successfully!');
+          dispatch(fetchProducts());
         })
         .catch((error) => {
-          console.error('Error deleting manager:', error);
-          alert('Failed to delete manager.');
+          console.error('Error deleting product:', error);
+          alert('Failed to delete product.');
         });
     }
   };
 
-  const handleUpdate = (manager) => {
-    setSelectedManager(manager);
+  const handleUpdate = (product) => {
+    setSelectedProduct(product);
     setShowPopup(true);
   };
 
   const handleClose = () => {
-    setSelectedManager(null);
+    setSelectedProduct(null);
     setShowPopup(false);
   };
 
   return (
     <motion.div className="relative bg-white p-4 rounded-xl shadow-md mt-6">
-      {/* Managers list gets dimmed when popup is active */}
+      {/* Products list gets dimmed when popup is active */}
       <div className={`${showPopup ? 'opacity-30 blur-sm pointer-events-none' : ''} transition-all duration-300`}>
         <motion.h2 className="text-xl font-semibold mb-4 text-teal-700">
-          Managers List
+          Products List
         </motion.h2>
 
         <table className="w-full text-left">
           <thead>
             <tr>
-              <th className="py-2">Name</th>
-              <th className="py-2">Email</th>
-              <th className="py-2">Phone</th>
-              <th className="py-2">Department</th>
-              <th className="py-2">ID no</th>
-              <th className="py-2">Actions</th>
+              <th className="py-2">Product Name</th>
+              <th className="py-2">Company Name</th>
+              <th className="py-2">Stock</th>
             </tr>
           </thead>
           <tbody>
-            {managers
-              .filter(manager => !manager.isDeleted)
-              .map((manager, index) => (
+            {products
+              .filter(product => !product.isDeleted)
+              .map((product, index) => (
                 <motion.tr
-                  key={manager._id}
+                  key={product._id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 + index * 0.1 }}
                   className="border-t"
                 >
-                  <td className="py-2">{manager.name}</td>
-                  <td className="py-2">{manager.email}</td>
-                  <td className="py-2">{manager.phone}</td>
-                  <td className="py-2">{manager.dept}</td>
-                  <td className="py-2">{manager.managerID}</td>
+                  <td className="py-2">{product.productName}</td>
+                  <td className="py-2">{product.companyName}</td>
+                  <td className="py-2">{product.stock}</td>
                   <td className="py-2 space-x-2">
                     <button
                       onClick={() => handleUpdate(manager)}
@@ -96,14 +91,14 @@ const ManagersList = () => {
 
       {/* Popup overlays on top */}
       {showPopup && selectedManager && (
-        <UpdateManager
+        <UpdateProduct
           managerData={selectedManager}
           onClose={handleClose}
-          onUpdated={() => dispatch(fetchManagers())}
+          onUpdated={() => dispatch(fetchProducts())}
         />
       )}
     </motion.div>
   );
 };
 
-export default ManagersList;
+export default ProductsList;

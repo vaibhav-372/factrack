@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { motion } from 'framer-motion';
 import { useDispatch } from 'react-redux';
-import { updateManager } from '../../../redux/adminSlice';
+import { updateManager } from '../../../redux/adminManagerSlice';
 
 const UpdateManager = ({ managerData, onClose, onUpdated }) => {
   const dispatch = useDispatch();
@@ -34,8 +34,8 @@ const UpdateManager = ({ managerData, onClose, onUpdated }) => {
 
       if (updateManager.fulfilled.match(resultAction)) {
         alert('Manager updated successfully');
-        onUpdated(); // Refresh list
-        onClose();   // Close modal
+        onUpdated();
+        onClose();
       } else {
         const msg = resultAction.payload?.message || 'Update failed';
         if (msg.includes('email')) setErrors({ email: msg });
@@ -49,7 +49,6 @@ const UpdateManager = ({ managerData, onClose, onUpdated }) => {
       setSubmitting(false);
     }
   };
-
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-center bg-opacity-40">
       <motion.div

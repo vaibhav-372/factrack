@@ -10,7 +10,11 @@ const Manager = () => {
     setManagers([...managers, newManager]);
     setActiveTab('list');
   };
-  
+
+  const handleDelete = (index) => {
+    const filtered = managers.filter((_, i) => i !== index);
+    setManagers(filtered);
+  };
 
   return (
     <div className="p-4 sm:p-6 ">
@@ -37,7 +41,7 @@ const Manager = () => {
       {/* Tab Content */}
       {activeTab === 'add' && <AddManager onManagerAdded={handleAdd} />}
       {activeTab === 'list' && (
-        <ManagersList />
+        <ManagersList managers={managers} onDelete={handleDelete} />
       )}
     </div>
   );

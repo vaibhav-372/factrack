@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// Manager Schema
 const managerSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
@@ -11,7 +12,18 @@ const managerSchema = new mongoose.Schema({
   salary: { type: Number, required: true },
   username: { type: String, required: true, unique: true },
   remarks: { type: String },
-  isDeleted: {type: Boolean},
+  isDeleted: { type: Boolean },
 }, { timestamps: true });
 
-module.exports = mongoose.model('ManagersList', managerSchema);
+// Product Schema
+const productSchema = new mongoose.Schema({
+  productName: { type: String, required: true },
+  companyName: { type: String, required: true },
+  stock: { type: Number, required: true, min: 0 },
+}, { timestamps: true });
+
+// Exporting both models
+module.exports = {
+  Manager: mongoose.model('ManagersList', managerSchema),
+  Product: mongoose.model('Product', productSchema)
+};

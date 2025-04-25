@@ -10,7 +10,7 @@ export const fetchManagers = createAsyncThunk("managers/fetch", async () => {
 // ADD new manager
 export const addManager = createAsyncThunk("managers/add", async (manager) => {
   const res = await axios.post(
-    "http://localhost:5000/api/admin/managers",
+    "http://localhost:5000/api/admin/add-manager",
     manager
   );
   return res.data;
@@ -47,8 +47,8 @@ export const updateManager = createAsyncThunk(
   }
 );
 
-const adminSlice = createSlice({
-  name: "managers",
+const adminManagerSlice = createSlice({
+  name: "adminManager",
   initialState: {
     list: [],
     loading: false,
@@ -94,4 +94,4 @@ const adminSlice = createSlice({
   },
 });
 
-export default adminSlice.reducer;
+export default adminManagerSlice.reducer;
