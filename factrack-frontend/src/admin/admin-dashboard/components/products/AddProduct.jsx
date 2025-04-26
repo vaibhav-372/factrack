@@ -11,13 +11,13 @@ const AddProduct = ({ onProductAdded = () => { } }) => {
 
     const initialValues = {
         productName: '',
-        productCompanyName: '',
+        companyName: '',
         stock: '',
     };
 
     const validationSchema = Yup.object({
         productName: Yup.string().required('Name is required'),
-        productCompanyName: Yup.string().required('Company name is required'),
+        companyName: Yup.string().required('Company name is required'),
         stock: Yup.number().typeError('stock must be a number').required('Amount of stock is required'),
     });
 
@@ -67,7 +67,7 @@ const AddProduct = ({ onProductAdded = () => { } }) => {
                     <Form className="space-y-5">
                         {[
                             { name: 'productName', label: 'Product Name', placeholder: 'Enter Product Name' },
-                            { name: 'productCompanyName', label: 'Product Company Name', placeholder: 'Enter Product Company Name' },
+                            { name: 'companyName', label: 'Product Company Name', placeholder: 'Enter Product Company Name' },
                             { name: 'stock', label: 'Stock', type: 'number', placeholder: 'Enter stock in number' },
 
                         ].map(({ name, label, type = 'text', placeholder }) => (
