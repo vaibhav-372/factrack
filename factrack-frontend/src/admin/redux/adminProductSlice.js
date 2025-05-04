@@ -8,14 +8,23 @@ export const fetchProducts = createAsyncThunk("products/fetch", async () => {
 });
 
 // ADD new product
-export const addProduct = createAsyncThunk("products/add", async (product) => {
-  const res = await axios.post("http://localhost:5000/api/admin/add-product", product);
-  return res.data;
-});
+export const addProduct = createAsyncThunk(
+  "products/add",
+  async (product, { rejectWithValue }) => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/admin/add-product", product);
+      return res.data;
+    } catch (error) {
+      // Now we properly pass the error with response status and data
+      return rejectWithValue(error.response?.data || { message: "Unknown error" });
+    }
+  }
+);
+
 
 // DELETE product
 export const deleteProduct = createAsyncThunk("products/delete", async (id) => {
-  await axios.put(`http://localhost:5000/api/admin/delete-product/${id}`);
+  await axios.delete(`http://localhost:5000/api/admin/delete-product/${id}`);
   return id;
 });
 

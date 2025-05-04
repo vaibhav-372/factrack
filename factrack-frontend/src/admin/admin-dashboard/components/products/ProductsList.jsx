@@ -71,13 +71,13 @@ const ProductsList = () => {
                   <td className="py-2">{product.stock}</td>
                   <td className="py-2 space-x-2">
                     <button
-                      onClick={() => handleUpdate(manager)}
+                      onClick={() => handleUpdate(product)}
                       className="text-blue-500 hover:underline"
                     >
                       Update
                     </button>
                     <button
-                      onClick={() => handleDelete(manager)}
+                      onClick={() => handleDelete(product)}
                       className="text-red-500 hover:underline"
                     >
                       Delete
@@ -90,9 +90,9 @@ const ProductsList = () => {
       </div>
 
       {/* Popup overlays on top */}
-      {showPopup && selectedManager && (
+      {showPopup && selectedProduct && (
         <UpdateProduct
-          managerData={selectedManager}
+          productData={selectedProduct}
           onClose={handleClose}
           onUpdated={() => dispatch(fetchProducts())}
         />

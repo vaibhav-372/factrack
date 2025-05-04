@@ -1,7 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { motion } from 'framer-motion';
-import axios from 'axios';
 import { addProduct } from '../../../redux/adminProductSlice';
 import { useDispatch } from 'react-redux';
 
@@ -23,24 +22,37 @@ const AddProduct = ({ onProductAdded = () => { } }) => {
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         try {
-            const resultAction = await dispatch(addProduct(values));
-
-            if (addProduct.fulfilled.match(resultAction)) {
-                onProductAdded(resultAction.payload);
-                alert('Product added successfully');
-                resetForm();
-            } else {
-                const error = resultAction.payload || resultAction.error;
-                const errorMessage = error?.message || 'Something went wrong while adding the product. Please try again later.';
-                // setStatus({ error: errorMessage });
-                alert(errorMessage);    
-            }
+          const payload = {
+            productName: values.productName,
+            companyName: values.companyName,
+            stock: values.stock,
+          };
+      
+          const result = await dispatch(addProduct(payload)).unwrap();
+      
+          onProductAdded(result);
+          alert('Product added successfully!');
+          resetForm();
+      
         } catch (error) {
-            console.error('Add Product error:', error);
+          console.error('Add Product error:', error);
+      
+          const message = error?.message || error?.message || "Something went wrong.";
+      
+          if (
+            error?.message === "This product already exists, you can directly update product" ||
+            error?.message === "This product already exists, you can directly update the product"
+          ) {
+            alert(error.message);
+          } else {
+            alert(message);
+          }
+      
         } finally {
-            setSubmitting(false);
+          setSubmitting(false);
         }
-    };
+      };
+
 
     return (
         <motion.div

@@ -58,13 +58,13 @@ const UpdateManager = ({ managerData, onClose, onUpdated }) => {
       >
         <h2 className="text-2xl font-bold text-teal-700 mb-4 text-center">Update Manager</h2>
         <Formik
-  initialValues={{
-    ...managerData,
-    DOJ: managerData.DOJ?.split('T')[0], // Extract only the date part
-  }}
-  validationSchema={validationSchema}
-  onSubmit={handleSubmit}
->
+          initialValues={{
+            ...managerData,
+            DOJ: managerData.DOJ?.split('T')[0], // Extract only the date part
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
           {({ isSubmitting }) => (
             <Form className="space-y-4">
               {[

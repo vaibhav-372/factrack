@@ -157,6 +157,18 @@ router.post("/add-product", async (req, res) => {
   try {
     const { productName, companyName, stock } = req.body;
 
+    console.log(
+      `productName:- ${productName}, companyName:- ${companyName}, stock:- ${stock}`
+    );
+
+    // First validate input
+    if (!productName || !companyName) {
+      return res.status(400).json({
+        success: false,
+        message: "Product Name and Company Name are required.",
+      });
+    }
+
     // Check for existing product
     const existingProduct = await Product.findOne({
       productName,
@@ -165,7 +177,10 @@ router.post("/add-product", async (req, res) => {
 
     if (existingProduct) {
       return res.status(400).json({
-        message: "This product already exists, you can directly update product",
+        success: false,
+        error: "Product already exists",
+        message:
+          "This product already exists, you can directly update the product",
       });
     }
 
@@ -191,8 +206,7 @@ router.post("/add-product", async (req, res) => {
   }
 });
 
-
-
+// fetch peoducts
 router.get("/fetch-products", async (req, res) => {
   try {
     // Fetch all products from the database
@@ -211,5 +225,115 @@ router.get("/fetch-products", async (req, res) => {
     });
   }
 });
+
+//update products
+router.put("/update-product/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { productName, companyName, stock } = req.body;
+
+    // Validate incoming data
+    if (!productName || !companyName || stock == null) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Check for duplicate product (excluding the current one)
+    const duplicate = await Product.findOne({
+      _id: { $ne: id },
+      productName: { $regex: new RegExp(`^${productName}$`, "i") },
+      companyName: { $regex: new RegExp(`^${companyName}$`, "i") },
+    });
+
+    if (duplicate) {
+      return res.status(409).json({
+        message:
+          "This product already exists, you can directly update the product.",
+      });
+    }
+
+    // Update the product
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { productName, companyName, stock },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ message: "Something went wrong on the server" });
+  }
+});
+
+
+//deletinh products
+router.delete('/delete-product/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    res.status(200).json({ message: 'Product deleted successfully', data: deletedProduct });
+  } catch (error) {
+    console.error('Delete error:', error);
+    res.status(500).json({ message: 'Server error during deletion' });
+  }
+});
+
+
+// Update Manager Attendance
+router.put("/update-manager-attendance/:id", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  console.log(`status received on backend:-`, status) 
+  console.log(`id received on backend:-`, id) 
+
+  try {
+    // Validate input
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: "Status is required",
+      });
+    }
+
+    // Find and update manager's status
+    const updatedManager = await Manager.findOneAndUpdate(
+      { _id: id },
+      { status },
+      { new: true }
+    );
+
+    if (!updatedManager) {
+      return res.status(404).json({
+        success: false,
+        message: "Manager not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Attendance marked successfully",
+      data: updatedManager,
+    });
+  } catch (err) {
+    console.error("Error updating attendance:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error while updating attendance",
+    });
+  }
+}); 
+
+
 
 module.exports = router;

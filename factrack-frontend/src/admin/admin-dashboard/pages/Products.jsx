@@ -36,7 +36,7 @@ const Products = () => {
       {/* Tab Content */}
       {activeTab === 'add' && <AddProduct onManagerAdded={handleAdd} />}
       {activeTab === 'list' && (
-        <ProductsList />
+        <ProductsList products={products} />
       )}
     </div>
   );

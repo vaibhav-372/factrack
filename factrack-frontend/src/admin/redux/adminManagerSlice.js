@@ -47,6 +47,31 @@ export const updateManager = createAsyncThunk(
   }
 );
 
+// UPDATE ATTENDANCE
+export const updateManagerAttendance = createAsyncThunk(
+  'admin/updateManagerAttendance',
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(
+        `http://localhost:5000/api/admin/update-manager-attendance/${id}`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: 'Attendance update failed' });
+    }
+  }
+);
+
+
+
 const adminManagerSlice = createSlice({
   name: "adminManager",
   initialState: {
@@ -90,7 +115,15 @@ const adminManagerSlice = createSlice({
         } else {
           console.warn("Expected state.list to be an array, got:", state.list);
         }
+      })
+      .addCase(updateManagerAttendance.fulfilled, (state, action) => {
+        const updatedManager = action.payload;
+        const index = state.list.findIndex((m) => m._id === updatedManager._id);
+        if (index !== -1) {
+          state.list[index] = updatedManager;
+        }
       });
+
   },
 });
 
