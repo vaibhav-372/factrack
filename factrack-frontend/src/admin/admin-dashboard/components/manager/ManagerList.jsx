@@ -10,6 +10,7 @@ const ManagersList = () => {
   const managers = useSelector(state => state.adminManager.list || []);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedManager, setSelectedManager] = useState(null);
+  const [selectedUpdateManager, setSelectedUpdateManager] = useState(null);
 
   useEffect(() => {
     dispatch(fetchManagers());
@@ -31,21 +32,24 @@ const ManagersList = () => {
   };
 
   const handleUpdate = (manager) => {
-    setSelectedManager(manager);
+    setSelectedUpdateManager(manager);
     setShowPopup(true);
   };
-  
+
   const handleClose = () => {
     setSelectedManager(null);
     setShowPopup(false);
   };
-  
-  
+
+
   const handleAttendance = (manager) => {
-    alert(manager) 
-    setSelectedManager(manager);
-    setShowPopup(true);
-  }
+    if (window.confirm(`Attendance of ${manager.name}`)) {
+      setSelectedManager(manager);
+      setShowPopup(true);    
+    } else {
+      console.log("Attendance cancelled.");
+    }
+  };
 
   return (
     <motion.div className="relative bg-white p-4 rounded-xl shadow-md mt-6">
@@ -115,9 +119,9 @@ const ManagersList = () => {
       </div>
 
       {/* Popup overlays on top */}
-      {showPopup && selectedManager && (
+      {showPopup && selectedUpdateManager && (
         <UpdateManager
-          managerData={selectedManager}
+          managerData={selectedUpdateManager}
           onClose={handleClose}
           onUpdated={() => dispatch(fetchManagers())}
         />

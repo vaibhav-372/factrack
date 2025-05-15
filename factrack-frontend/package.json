@@ -13,17 +13,23 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.1",
     "@tailwindcss/vite": "^4.1.0",
+    "ag-grid-community": "^33.2.4",
+    "ag-grid-react": "^33.2.4",
     "axios": "^1.8.4",
     "formik": "^2.4.6",
     "framer-motion": "^12.6.3",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.487.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.0",
+    "recharts": "^2.15.3",
     "redux-persist": "^6.0.0",
     "tailwindcss": "^4.1.0",
-    "yup": "^1.6.1"
+    "yup": "^1.6.1",
+    "zingchart": "^2.9.16-1",
+    "zingchart-react": "^3.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

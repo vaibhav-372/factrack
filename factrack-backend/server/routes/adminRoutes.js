@@ -74,6 +74,7 @@ router.post("/add-manager", async (req, res) => {
       username,
       remarks,
       isDeleted: 0,
+      status:'Off Duty'
     });
 
     const saved = await newManager.save();

@@ -48,7 +48,7 @@ const ManagerAttendance = ({ managerData, onClose, onUpdated }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-opacity-40 bg-black">
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-opacity-70">
             <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
